@@ -1,6 +1,6 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-import Preprocess_Data as data   # FIXED import
+import Preprocess_Data as data 
 
 # Getting the variables from PreProcess_Data.py
 train_ds = data.train_ds
@@ -29,3 +29,19 @@ model = Sequential([
     Dropout(0.4),
     Dense(num_classes, activation='softmax')  # Use correct num_classes
 ])
+
+# Compiling the model
+model.compile(
+    optimizer="adam",
+    loss="categorical_crossentropy",
+    metrics=["accuracy"]
+)
+
+model.summary()
+
+# Training the model
+history = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=10
+)
