@@ -37,4 +37,14 @@ validation_dir = tf.keras.preprocessing.image_dataset_from_directory(
     
 )
 
+## Normalizing the image to the Pixel size (0-255 -> 0-1)
+
+AUTOTUNE = tf.data.AUTOTUNE
+
+train_ds = train_dir.map(lambda x, y: (x/255.0, y)).cache().prefetch(AUTOTUNE)
+val_ds = validation_dir.map(lambda x, y: (x/255.0, y)).cache().prefetch(AUTOTUNE)
+test_ds = test_dir.map(lambda x, y: (x/255.0, y)).cache().prefetch(AUTOTUNE)
+
+class_names = train_dir.class_names
+print("Classes:", class_names)
 
