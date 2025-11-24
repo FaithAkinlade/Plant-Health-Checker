@@ -21,7 +21,6 @@ class PlantHealthApp:
         # Instructions
         tk.Label(root, text="Step 1: Upload Image", font=("Arial", 12)).pack(pady=(10, 5))
 
-    # ... inside __init__ ...
         # INTERACTIVE ELEMENT 1: Select Image Button
         self.btn_select = tk.Button(root, text="Select Plant Image", command=self.select_image, height=2, width=20)
         self.btn_select.pack(pady=5)
@@ -30,10 +29,18 @@ class PlantHealthApp:
         self.label_file_path = tk.Label(root, text="No file selected", fg="gray", wraplength=400)
         self.label_file_path.pack(pady=5)
 
-    # INTERACTIVE ELEMENT 2: Analyze Button (Triggers Window 2)
+        # INTERACTIVE ELEMENT 2: Analyze Button (Triggers Window 2)
         self.btn_analyze = tk.Button(root, text="Analyze Plant Health", command=self.open_results_window,
                                      bg="lightgreen", font=("Arial", 12, "bold"))
         self.btn_analyze.pack(pady=30)
+
+        # INTERACTIVE ELEMENT 3: Reset Button
+        self.btn_reset = tk.Button(root, text="Reset Selection", command=self.reset_selection, fg="orange")
+        self.btn_reset.pack(pady=5)
+
+        # INTERACTIVE ELEMENT 4: Exit Button
+        self.btn_exit = tk.Button(root, text="Exit", command=root.quit, fg="red")
+        self.btn_exit.pack(side="bottom", pady=20)
 
 
     def select_image(self):
@@ -67,3 +74,11 @@ class PlantHealthApp:
 
         # Close Button
         tk.Button(results_window, text="Close", command=results_window.destroy).pack(pady=10)
+
+    def reset_selection(self):
+        self.selected_image_path = None
+        self.label_file_path.config(text="No file selected", fg="gray")
+
+    def save_report_dummy(self):
+        """Dummy function to save the test trsults ."""
+        messagebox.showinfo("Saved", "Report saved successfully")
