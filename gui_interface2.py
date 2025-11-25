@@ -12,7 +12,7 @@ class PlantHealthApp:
         # We load data immediately so the user doesn't have to click a button
         self.data_manager = PlantDataManager('data/plants_dataset.csv')
         self.data_manager.load_dataset()
-        self.selected_image_path = None 
+        self.selected_image_path = None
 
         # Title
         self.label_title = tk.Label(root, text="Plant Health Checker", font=("Arial", 18, "bold"))
@@ -20,3 +20,4 @@ class PlantHealthApp:
 
         # Instructions
         tk.Label(root, text="Step 1: Upload Image", font=("Arial", 12)).pack(pady=(10, 5))
+
