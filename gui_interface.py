@@ -1,9 +1,15 @@
 # gui_interface.py
 import tkinter as tk
 from tkinter import filedialog, messagebox
-# from data_manager import PlantDataManager # Ensure this file exists for the app to run fully
 from PIL import ImageTk, Image
-from model_predict import predict_image
+
+# Try to import the prediction function.
+# If it fails, the app will still run using dummy data.
+try:
+    from model_predict import predict_image
+except ImportError:
+    print("Warning: model_predict.py not found. Analysis will use dummy data.")
+    predict_image = None
 
 
 class PlantHealthApp:
@@ -11,9 +17,9 @@ class PlantHealthApp:
         self.root = root
         self.root.title("Group 7: Plant Health Checker")
         self.root.geometry("900x500")
+        self.root.resizable(False, False)  # Lock window size
 
-        # ---------------- BACKGROUND CANVAS ----------------
-        # Use Canvas to handle the background image and allow transparent text/buttons
+        # BACKGROUND CANVAS 
         self.canvas = tk.Canvas(root, width=900, height=500, highlightthickness=0)
         self.canvas.pack(fill="both", expand=True)
 
@@ -22,28 +28,27 @@ class PlantHealthApp:
             self.bg_image = Image.open("background_fixed.jpg")
             self.bg_image = self.bg_image.resize((900, 500))
             self.bg_photo = ImageTk.PhotoImage(self.bg_image)
-            # Draw the image on the canvas
             self.canvas.create_image(0, 0, image=self.bg_photo, anchor="nw")
         except FileNotFoundError:
-            # Fallback if the image is missing
             self.canvas.config(bg="#d9d9d9")
-            print("Warning: background_fixed.jpg not found. Using default background color.")
+            print("Warning: background_fixed.jpg not found.")
 
-        # ---------------- LEFT SIDE (Transparent Widgets on Canvas) ----------------
-        # We use canvas.create_text and canvas.create_window for transparency
+        # LEFT SIDE 
+        # Center X coordinate for buttons
+        center_x = 150
 
-        # Title (Transparent text)
+        # Title
         self.canvas.create_text(
-            150, 40,
+            center_x, 40,
             text="Plant Health Checker",
             font=("Arial", 18, "bold"),
             fill="black",
             anchor="center"
         )
 
-        # Step label (Transparent text)
+        # Step label
         self.canvas.create_text(
-            150, 80,
+            center_x, 80,
             text="Step 1: Upload Image",
             font=("Arial", 12, "bold"),
             fill="black",
@@ -58,19 +63,9 @@ class PlantHealthApp:
             width=20,
             height=2
         )
-        self.canvas.create_window(150, 130, window=self.btn_select)
+        self.canvas.create_window(center_x, 130, window=self.btn_select)
 
-        # File path label (Transparent text)
-        self.text_file_path = self.canvas.create_text(
-            150, 170,
-            text="No file selected",
-            fill="black",
-            font=("Arial", 15, "bold"),
-            width=260,
-            anchor="center"
-        )
-
-        # Analyze button
+        # Analyze button (Moved up since we removed the file path text)
         self.btn_analyze = tk.Button(
             root,
             text="Analyze Plant Health",
@@ -78,7 +73,7 @@ class PlantHealthApp:
             font=("Arial", 12, "bold"),
             width=20
         )
-        self.canvas.create_window(150, 220, window=self.btn_analyze)
+        self.canvas.create_window(center_x, 200, window=self.btn_analyze)
 
         # Reset button
         self.btn_reset = tk.Button(
@@ -87,7 +82,7 @@ class PlantHealthApp:
             command=self.reset_selection,
             width=20
         )
-        self.canvas.create_window(150, 270, window=self.btn_reset)
+        self.canvas.create_window(center_x, 250, window=self.btn_reset)
 
         # Exit button
         self.btn_exit = tk.Button(
@@ -96,25 +91,18 @@ class PlantHealthApp:
             command=root.quit,
             width=20
         )
-        self.canvas.create_window(150, 320, window=self.btn_exit)
+        self.canvas.create_window(center_x, 300, window=self.btn_exit)
 
-        # ---------------- RIGHT SIDE (Image Preview) ----------------
-        # Frame size adjusted to 400x400 and placed at x=450
+        # RIGHT SIDE (Image Preview) 
         self.right_frame = tk.Frame(root, bg="white", highlightthickness=2, bd=2, relief="groove")
-        self.right_frame.place(x=450, y=50, width=400, height=400)  # <- RESIZED BLOCK
+        self.right_frame.place(x=450, y=50, width=400, height=400)
 
         self.image_label = tk.Label(self.right_frame, bg="white", text="Preview Area")
         self.image_label.pack(expand=True, fill="both")
 
-        # Load dataset (Uncomment if data_manager is ready)
-        # self.data_manager = PlantDataManager('data/plants_dataset.csv')
-        # if not self.data_manager.load_dataset():
-        #     messagebox.showerror("Error", "Dataset could not be loaded.")
-
         self.selected_image_path = None
         self.displayed_image = None
 
-    # -----------------------------------------------------
 
     def select_image(self):
         file_path = filedialog.askopenfilename(
@@ -123,47 +111,59 @@ class PlantHealthApp:
         )
         if file_path:
             self.selected_image_path = file_path
-            # Update canvas text item
-            self.canvas.itemconfig(self.text_file_path, text=f"File: {file_path}", fill="black")
+            # We no longer display the text path here
             self.show_image_on_right(file_path)
 
     def show_image_on_right(self, file_path):
-        img = Image.open(file_path)
-
-        # Resizing to fit the new 400x400 frame (380x380 keeps a small margin)
-        img = img.resize((380, 380))
-
-        self.displayed_image = ImageTk.PhotoImage(img)
-        self.image_label.config(image=self.displayed_image, text="")
+        try:
+            img = Image.open(file_path)
+            # Resize to fit the 400x400 frame
+            img = img.resize((380, 380))
+            self.displayed_image = ImageTk.PhotoImage(img)
+            self.image_label.config(image=self.displayed_image, text="")
+        except Exception as e:
+            messagebox.showerror("Error", "Could not open image.")
 
     def get_plant_message(self, plant_class):
-        messages = {
-            "Healthy": "Your plant looks healthy! Keep watering and provide sunlight.",
-            "Rust": "Possible fungal infection detected. Consider using antifungal spray.",
-            "Powdery": "Your plant looks almost certainly covered in a powdery mildew. This is a fungal disease that "
-                       "appears as white or grayish spots and patches on leaves, stems and flowers. It could be caused "
-                       "by fungal spores, poor air circulation. It is favored by warm temperatures (around 70 - 80 "
-                       "degrees F), high humidity at night and dry conditions during the day.  "
-                       ""
-                       "Treatment"
-            
-                
-        }
-
-        return messages.get(plant_class, "More analysis is required.")
+        name = plant_class.lower()
+        if "healthy" in name:
+            return "Your plant looks healthy! Keep up the good work."
+        elif "rot" in name or "fung" in name:
+            return "Possible fungal issue. Avoid overwatering."
+        elif "bacteri" in name:
+            return "Bacterial symptoms detected. Isolate the plant."
+        elif "vir" in name:
+            return "Possible viral infection. Check for pests."
+        else:
+            return "Disease detected. Consult a specialist."
 
     def open_results_window(self):
         if not self.selected_image_path:
             messagebox.showwarning("Warning", "Please select an image first.")
             return
 
-        # 🔍 Run ML prediction
-        plant_class, confidence = predict_image(self.selected_image_path)
+        # Check if model is loaded
+        if predict_image is None:
+            # Fallback for testing UI without model
+            plant_class = "Demo: Apple Rot"
+            confidence = 88.5
+        else:
+            try:
+                # Run ML prediction
+                plant_class, confidence = predict_image(self.selected_image_path)
+            except Exception as e:
+                messagebox.showerror("Prediction Error", str(e))
+                return
 
-        # 🪟 Create results window
+        # Create results window
         results_window = tk.Toplevel(self.root)
         results_window.title("Analysis Results")
         results_window.geometry("400x350")
+
+        # Center the window
+        x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 200
+        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 175
+        results_window.geometry(f"+{x}+{y}")
 
         tk.Label(results_window, text="Analysis Complete",
                  font=("Arial", 16, "bold")).pack(pady=20)
@@ -171,27 +171,28 @@ class PlantHealthApp:
         details_frame = tk.Frame(results_window, relief="groove", borderwidth=2)
         details_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
+        color = "green" if "healthy" in plant_class.lower() else "red"
+
         tk.Label(details_frame, text=f"Condition: {plant_class}",
-                 font=("Arial", 12, "bold")).pack(pady=5)
+                 font=("Arial", 12, "bold"), fg=color).pack(pady=5)
+
         tk.Label(details_frame, text=f"Confidence: {confidence:.2f}%",
                  font=("Arial", 12)).pack(pady=5)
 
-        tk.Label(details_frame, text="Plant Analysis:",
-                 font=("Arial", 12, "bold")).pack(pady=5)
+        tk.Label(details_frame, text="Recommendation:",
+                 font=("Arial", 10, "bold")).pack(pady=(10, 0))
 
-        # Optional: add a description for each disease
-        tk.Label(details_frame, text=self.get_plant_message(plant_class),
-                 wraplength=300).pack(pady=10)
+        advice = self.get_plant_message(plant_class)
+        tk.Label(details_frame, text=advice,
+                 wraplength=300, justify="center").pack(pady=5)
 
         tk.Button(results_window, text="Close",
                   command=results_window.destroy).pack(pady=10)
 
     def reset_selection(self):
         self.selected_image_path = None
-        # Reset canvas text item
-        self.canvas.itemconfig(self.text_file_path, text="No file selected", fill="gray")
-        # Clear the preview area
         self.image_label.config(image="", text="Preview Area")
+
 
 # Run GUI
 if __name__ == "__main__":
