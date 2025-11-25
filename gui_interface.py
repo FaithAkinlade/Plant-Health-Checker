@@ -19,7 +19,7 @@ class PlantHealthApp:
         self.root.geometry("900x500")
         self.root.resizable(False, False)  # Lock window size
 
-        # BACKGROUND CANVAS 
+        # BACKGROUND CANVAS
         self.canvas = tk.Canvas(root, width=900, height=500, highlightthickness=0)
         self.canvas.pack(fill="both", expand=True)
 
@@ -33,7 +33,7 @@ class PlantHealthApp:
             self.canvas.config(bg="#d9d9d9")
             print("Warning: background_fixed.jpg not found.")
 
-        # LEFT SIDE 
+        # LEFT SIDE
         # Center X coordinate for buttons
         center_x = 150
 
@@ -93,7 +93,7 @@ class PlantHealthApp:
         )
         self.canvas.create_window(center_x, 300, window=self.btn_exit)
 
-        # RIGHT SIDE (Image Preview) 
+        # RIGHT SIDE (Image Preview)
         self.right_frame = tk.Frame(root, bg="white", highlightthickness=2, bd=2, relief="groove")
         self.right_frame.place(x=450, y=50, width=400, height=400)
 
@@ -125,17 +125,13 @@ class PlantHealthApp:
             messagebox.showerror("Error", "Could not open image.")
 
     def get_plant_message(self, plant_class):
-        name = plant_class.lower()
-        if "healthy" in name:
-            return "Your plant looks healthy! Keep up the good work."
-        elif "rot" in name or "fung" in name:
-            return "Possible fungal issue. Avoid overwatering."
-        elif "bacteri" in name:
-            return "Bacterial symptoms detected. Isolate the plant."
-        elif "vir" in name:
-            return "Possible viral infection. Check for pests."
-        else:
-            return "Disease detected. Consult a specialist."
+        messages = {
+            "Healthy": "Your plant looks healthy! Keep watering at recommended intervals and provide sunlight.",
+            "Rust": "Possible rust fungal infection detected. Consider removing infected leaves, and using antifungal spray.",
+            "Powdery": "Possible powdery mildew detected. Consider removing leaves, improving air flow and treating with a baking sode solution."
+        }
+
+        return messages.get(plant_class, "More analysis is required.")
 
     def open_results_window(self):
         if not self.selected_image_path:
@@ -171,7 +167,7 @@ class PlantHealthApp:
         details_frame = tk.Frame(results_window, relief="groove", borderwidth=2)
         details_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        color = "green" if "healthy" in plant_class.lower() else "red"
+        color = "green" if "healthy" in plant_class.lower() else ("red" if "rust" in plant_class.lower() else "grey")
 
         tk.Label(details_frame, text=f"Condition: {plant_class}",
                  font=("Arial", 12, "bold"), fg=color).pack(pady=5)
