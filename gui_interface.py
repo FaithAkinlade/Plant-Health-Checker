@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 # from data_manager import PlantDataManager # Ensure this file exists for the app to run fully
 from PIL import ImageTk, Image
+from model_predict import predict_image
 
 
 class PlantHealthApp:
@@ -64,7 +65,7 @@ class PlantHealthApp:
             150, 170,
             text="No file selected",
             fill="black",
-            font=("Arial", 15, "bold"),  
+            font=("Arial", 15, "bold"),
             width=260,
             anchor="center"
         )
@@ -135,11 +136,25 @@ class PlantHealthApp:
         self.displayed_image = ImageTk.PhotoImage(img)
         self.image_label.config(image=self.displayed_image, text="")
 
+    def get_plant_message(plant_class):
+        messages = {
+            "Healthy": "Your plant looks healthy! Keep watering and provide sunlight.",
+            "Fungal": "Possible fungal infection detected. Consider using antifungal spray.",
+            "Bacterial": "Symptoms of bacterial disease found. Remove infected leaves quickly.",
+            "Viral": "Possible viral disease. Isolate this plant from others immediately."
+        }
+
+        return messages.get(plant_class, "More analysis is required.")
+
     def open_results_window(self):
         if not self.selected_image_path:
             messagebox.showwarning("Warning", "Please select an image first.")
             return
 
+        # 🔍 Run ML prediction
+        plant_class, confidence = predict_image(self.selected_image_path)
+
+        # 🪟 Create results window
         results_window = tk.Toplevel(self.root)
         results_window.title("Analysis Results")
         results_window.geometry("400x350")
@@ -150,12 +165,16 @@ class PlantHealthApp:
         details_frame = tk.Frame(results_window, relief="groove", borderwidth=2)
         details_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # Placeholder results
-        tk.Label(details_frame, text="Condition: (Good/Bad)",
+        tk.Label(details_frame, text=f"Condition: {plant_class}",
+                 font=("Arial", 12, "bold")).pack(pady=5)
+        tk.Label(details_frame, text=f"Confidence: {confidence:.2f}%",
                  font=("Arial", 12)).pack(pady=5)
-        tk.Label(details_frame, text="Confidence: (%)",
-                 font=("Arial", 12)).pack(pady=5)
-        tk.Label(details_frame, text="Details: (Plant details here)",
+
+        tk.Label(details_frame, text="Plant Analysis:",
+                 font=("Arial", 12, "bold")).pack(pady=5)
+
+        # Optional: add a description for each disease
+        tk.Label(details_frame, text=self.get_plant_message(plant_class),
                  wraplength=300).pack(pady=10)
 
         tk.Button(results_window, text="Close",
@@ -167,7 +186,6 @@ class PlantHealthApp:
         self.canvas.itemconfig(self.text_file_path, text="No file selected", fill="gray")
         # Clear the preview area
         self.image_label.config(image="", text="Preview Area")
-
 
 # Run GUI
 if __name__ == "__main__":
