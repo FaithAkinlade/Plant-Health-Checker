@@ -136,12 +136,18 @@ class PlantHealthApp:
         self.displayed_image = ImageTk.PhotoImage(img)
         self.image_label.config(image=self.displayed_image, text="")
 
-    def get_plant_message(plant_class):
+    def get_plant_message(self, plant_class):
         messages = {
             "Healthy": "Your plant looks healthy! Keep watering and provide sunlight.",
-            "Fungal": "Possible fungal infection detected. Consider using antifungal spray.",
-            "Bacterial": "Symptoms of bacterial disease found. Remove infected leaves quickly.",
-            "Viral": "Possible viral disease. Isolate this plant from others immediately."
+            "Rust": "Possible fungal infection detected. Consider using antifungal spray.",
+            "Powdery": "Your plant looks almost certainly covered in a powdery mildew. This is a fungal disease that "
+                       "appears as white or grayish spots and patches on leaves, stems and flowers. It could be caused "
+                       "by fungal spores, poor air circulation. It is favored by warm temperatures (around 70 - 80 "
+                       "degrees F), high humidity at night and dry conditions during the day.  "
+                       ""
+                       "Treatment"
+            
+                
         }
 
         return messages.get(plant_class, "More analysis is required.")
