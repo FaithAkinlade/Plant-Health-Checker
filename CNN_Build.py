@@ -1,6 +1,8 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-import Preprocess_Data as data 
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+import json
+import image_preprocessing_file as data 
 
 # Getting the variables from PreProcess_Data.py
 train_ds = data.train_ds
@@ -39,9 +41,30 @@ model.compile(
 
 model.summary()
 
+# Adding callbacks to stop overfitting
+callbacks = [
+    EarlyStopping(patience=3, restore_best_weights=True),
+    ModelCheckpoint("plant_health_model.keras", save_best_only=True)
+]
+
 # Training the model
 history = model.fit(
     train_ds,
     validation_data=val_ds,
     epochs=10
+    callbacks=callbacks
 )
+
+# Evaluating model on test data
+test_loss, test_acc = model.evaluate(data.test_ds)
+print(f"Test Accuracy: {test_acc:.4f}")
+print(f"Test Loss: {test_loss:.4f}")
+
+# Save the model
+model.save("plant_health_model.keras")
+
+# Saving class names for later use
+with open("class_names.json", "w") as f:
+    json.dump(data.class_names, f)
+
+
