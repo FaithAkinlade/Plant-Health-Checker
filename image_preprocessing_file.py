@@ -48,3 +48,5 @@ test_ds = test_dir.map(lambda x, y: (x/255.0, y)).cache().prefetch(AUTOTUNE)
 class_names = train_dir.class_names
 print("Classes:", class_names)
 
+# Exporting datasets and constants so CNN_Build.py can use them.
+__all__ = ["train_ds", "val_ds", "test_ds", "IMG_SIZE", "class_names"]
