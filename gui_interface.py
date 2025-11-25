@@ -167,17 +167,13 @@ class PlantHealthApp:
             print(f"Error saving history: {e}")
 
     def get_plant_message(self, plant_class):
-        name = plant_class.lower()
-        if "healthy" in name:
-            return "Your plant looks healthy! Keep up the good work."
-        elif "rot" in name or "fung" in name:
-            return "Possible fungal issue. Avoid overwatering."
-        elif "bacteri" in name:
-            return "Bacterial symptoms detected. Isolate the plant."
-        elif "vir" in name:
-            return "Possible viral infection. Check for pests."
-        else:
-            return "Disease detected. Consult a specialist."
+        messages = {
+            "Healthy": "Your plant looks healthy! Keep watering at recommended intervals and provide sunlight.",
+            "Rust": "Possible rust fungal infection detected. Consider removing infected leaves, and using antifungal spray.",
+            "Powdery": "Possible powdery mildew detected. Consider removing leaves, improving air flow and treating with a baking sode solution."
+        }
+
+        return messages.get(plant_class, "More analysis is required.")
 
     def open_results_window(self):
         if not self.selected_image_path:
