@@ -4,11 +4,31 @@ import pandas as pd
 import seaborn as sns
 
 ## data preprocessing
+
+# Google Drive folder ID
+ZIP_NAME = "Plant_Dataset.zip"
+
+# Download folder as zip
+if not os.path.exists("data"):
+    print("Downloading dataset from Google Drive...")
+    gdown.download_folder(
+        "https://drive.google.com/drive/folders/1EtSGVi8TMPbX4DDQUCl_xdY_iRjSmZxQ?usp=drive_link",
+        output=ZIP_NAME,
+        quiet=False,
+        use_cookies=True
+    )
+
+    # Extract the downloaded ZIP
+    print("Extracting dataset...")
+    with zipfile.ZipFile(ZIP_NAME, "r") as zip_ref:
+        zip_ref.extractall("data/")
+
 ## Training Image PreProcessing
 
-train_int = "/kaggle/input/plant-health-checker/Plant Dataset/Train"
-test_int = "/kaggle/input/plant-health-checker/Plant Dataset/Test"
-validation_int = "/kaggle/input/plant-health-checker/Plant Dataset/Validation"
+train_int = "data/Plant Dataset/Train"
+test_int = "data/Plant Dataset/Test"
+validation_int = "data/Plant Dataset/Validation"
+
 
 IMG_SIZE = (224,224)
 BATCH_SIZE = 32
