@@ -1,4 +1,8 @@
-# gui_interface.py
+# Project: Plant Health Checker
+# Students: Faith Akinlade, Smit Desai, Pratham Waghela
+# Description: Provides a graphical user interface (GUI) using Tkinter to allow users to upload plant images and check
+# their health. Integrates with the trained CNN model to make predictions.
+
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 from PIL import ImageTk, Image
