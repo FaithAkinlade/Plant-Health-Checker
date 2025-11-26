@@ -203,6 +203,12 @@ class PlantHealthApp:
             print(f"Error saving history: {e}")
 
     def get_plant_message(self, plant_class):
+        """
+        Gets the advice message corresponding to the plant's health condition.
+        :param plant_class: The name of the condition (e.g. 'Healthy').
+        :type plant_class: str
+        :return: A string containing advice for the user.
+        """
         messages = {
             "Healthy": "Your plant looks healthy! Keep watering at recommended intervals and provide sunlight.",
             "Rust": "Possible rust fungal infection detected. Consider removing infected leaves, and using antifungal spray.",
@@ -212,6 +218,10 @@ class PlantHealthApp:
         return messages.get(plant_class, "More analysis is required.")
 
     def open_results_window(self):
+        """
+        Runs the prediction and opens a new window to show the results.
+        :return: None
+        """
         if not self.selected_image_path:
             messagebox.showwarning("Warning", "Please select an image first.")
             return
@@ -252,6 +262,10 @@ class PlantHealthApp:
 
     # VIEW HISTORY POPUP 
     def view_history_popup(self):
+        """
+        Opens a popup window that displays the contents of the history log.
+        :return: None
+        """
         history_win = tk.Toplevel(self.root)
         history_win.title("Analysis History")
         history_win.geometry("700x400")
@@ -273,6 +287,10 @@ class PlantHealthApp:
 
     # OPEN SAVED FOLDER 
     def open_saved_images_folder(self):
+        """
+        Opens the folder containing saved images using the system file explorer.
+        :return: None
+        """
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)
 
@@ -281,6 +299,12 @@ class PlantHealthApp:
 
     # Helper function to open files/folders 
     def open_file_in_os(self, path):
+        """
+        Helper to open a file or folder using the OS default command.
+        :param path: The file path to open.
+        :type path: str
+        :return: None
+        """
         try:
             if platform.system() == 'Darwin':  # macOS
                 subprocess.call(['open', path])
@@ -292,6 +316,10 @@ class PlantHealthApp:
             messagebox.showerror("Error", f"Could not open path: {e}")
 
     def reset_selection(self):
+        """
+        Clears the current image selection and resets the preview.
+        :return: None
+        """
         self.selected_image_path = None
         self.image_label.config(image="", text="Preview Area")
 
