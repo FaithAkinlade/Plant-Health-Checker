@@ -21,7 +21,17 @@ except ImportError:
 
 
 class PlantHealthApp:
+    """
+    The main application class for the Plant Health Checker.
+    It manages the GUI window, handles user input (buttons/files),
+    and coordinates the analysis and file saving processes.
+    """
     def __init__(self, root):
+       """
+        Initializes the main application window and sets up the layout.
+        :param root: The main window object from Tkinter.
+        :type root: tk.Tk
+        """
         self.root = root
         self.root.title("Group 7: Plant Health Checker")
         self.root.geometry("900x650")
@@ -118,6 +128,10 @@ class PlantHealthApp:
         
 
     def select_image(self):
+        """
+        Opens a file dialog so the user can choose an image file.
+        :return: None
+        """
         file_path = filedialog.askopenfilename(
             title="Select a Plant Image",
             filetypes=[("Image Files", "*.jpg *.png *.jpeg")]
@@ -127,6 +141,12 @@ class PlantHealthApp:
             self.show_image_on_right(file_path)
 
     def show_image_on_right(self, file_path):
+        """
+        Resizes and displays the chosen image in the preview box.
+        :param file_path: The location of the image file.
+        :type file_path: str
+        :return: None
+        """
         try:
             img = Image.open(file_path)
             img = img.resize((380, 380))
@@ -137,6 +157,10 @@ class PlantHealthApp:
 
     # SAVE IMAGE FILE 
     def save_current_image(self):
+        """
+        Saves the currently selected image into the 'saved_images' folder.
+        :return: None
+        """
         if not self.selected_image_path:
             messagebox.showwarning("Warning", "No image selected to save.")
             return
@@ -157,6 +181,14 @@ class PlantHealthApp:
 
     # SAVE TEXT LOG ENTRY 
     def save_to_history(self, plant_class, confidence):
+        """
+        Writes the result of an analysis to the history log file.
+        :param plant_class: The health status or disease name.
+        :type plant_class: str
+        :param confidence: The confidence percentage from the model.
+        :type confidence: float
+        :return: None
+        """
         try:
             # FIXED: Added seconds back and corrected the order: File first, then Result
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
