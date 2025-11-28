@@ -8,20 +8,10 @@ import seaborn as sns
 # Google Drive folder ID
 ZIP_NAME = "Plant_Dataset.zip"
 
-# Download folder as zip
-if not os.path.exists("data"):
-    print("Downloading dataset from Google Drive...")
-    gdown.download_folder(
-        "https://drive.google.com/drive/folders/1EtSGVi8TMPbX4DDQUCl_xdY_iRjSmZxQ?usp=drive_link",
-        output=ZIP_NAME,
-        quiet=False,
-        use_cookies=True
-    )
-
-    # Extract the downloaded ZIP
-    print("Extracting dataset...")
-    with zipfile.ZipFile(ZIP_NAME, "r") as zip_ref:
-        zip_ref.extractall("data/")
+# Gathering local data
+ZIP_PATH = "Plant Dataset Lite 2.zip"
+with zipfile.ZipFile(ZIP_PATH, "r") as zip_ref:
+    zip_ref.extractall("data/")
 
 ## Training Image PreProcessing
 
