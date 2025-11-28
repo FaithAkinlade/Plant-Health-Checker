@@ -1,3 +1,8 @@
+# Project: Plant Health Checker
+# Authors: Smit Desai, Faith Akinlade (Group 7)
+# Description: Downloads (or loads) the Plant Dataset, extracts it if zipped, and prepares Train, Test, and Validation
+# image datasets for CNN training. Normalizes images and prefetches them for efficient processing.
+
 import tensorflow as tf
 import matplotlib.pyplot as ptl
 import pandas as pd
@@ -14,7 +19,6 @@ with zipfile.ZipFile(ZIP_PATH, "r") as zip_ref:
     zip_ref.extractall("data/")
 
 ## Training Image PreProcessing
-
 train_int = "data/Plant Dataset/Train"
 test_int = "data/Plant Dataset/Test"
 validation_int = "data/Plant Dataset/Validation"
@@ -48,7 +52,6 @@ validation_dir = tf.keras.preprocessing.image_dataset_from_directory(
 )
 
 ## Normalizing the image to the Pixel size (0-255 -> 0-1)
-
 AUTOTUNE = tf.data.AUTOTUNE
 
 train_ds = train_dir.map(lambda x, y: (x/255.0, y)).cache().prefetch(AUTOTUNE)
