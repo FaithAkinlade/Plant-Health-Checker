@@ -1,3 +1,8 @@
+# Project: Plant Health Checker
+# Students: Faith Akinlade, Smit Desai, Pratham Waghela (Group 7)
+# Description: Loads the trained CNN model and class names, and provides a function to predict the health status of a
+# plant from a given image. Returns the predicted class and confidence score.
+
 # model_predict.py
 import tensorflow as tf
 import numpy as np
@@ -16,7 +21,7 @@ def predict_image(image_path):
     """
     This function uses the model build in CNN_Build.py to predict the status of the plant's health based on the
     available data.
-    :param image_path: path of image uploaded by user
+    :param: image_path: path of image uploaded by user
     :return: name of plant health class, confidence in prediction
     """
     img = tf.keras.preprocessing.image.load_img(image_path, target_size=IMG_SIZE)
