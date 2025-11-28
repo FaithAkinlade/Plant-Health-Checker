@@ -1,3 +1,8 @@
+# Project: Plant Health Checker
+# Author: Faith Akinlade (Group 7)
+# Description: Builds and trains the Convolutional Neural Network (CNN) model using the preprocessed image datasets.
+# Defines layers, compiles the model, and handles model training and evaluation.
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
