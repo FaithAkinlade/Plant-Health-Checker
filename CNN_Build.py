@@ -1,5 +1,5 @@
 # Project: Plant Health Checker
-# Author: Faith Akinlade (Group 7)
+# Students: Faith Akinlade, Smit Desai, Pratham Waghela (Group 7)
 # Description: Builds and trains the Convolutional Neural Network (CNN) model using the preprocessed image datasets.
 # Defines layers, compiles the model, and handles model training and evaluation.
 
