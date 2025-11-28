@@ -1,5 +1,5 @@
-# Author: Pratham Waghela (Group 7)
-# Date: 2025-11-23
+# Project: Plant Health Checker
+# Students: Faith Akinlade, Smit Desai, Pratham Waghela (Group 7)
 # Description: This class handles loading and processing the plant dataset.
 
 import pandas as pd
