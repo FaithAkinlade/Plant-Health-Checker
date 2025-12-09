@@ -1,3 +1,8 @@
+# Project: Plant Health Checker
+# Students: Smit Desai, Faith Akinlade, Pratham Waghela (Group 7)
+# Description: Downloads (or loads) the Plant Dataset, extracts it if zipped, and prepares Train, Test, and Validation
+# image datasets for CNN training. Normalizes images and prefetches them for efficient processing.
+
 import tensorflow as tf
 import os
 import zipfile
