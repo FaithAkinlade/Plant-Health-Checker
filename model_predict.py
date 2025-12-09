@@ -1,3 +1,8 @@
+# Project: Plant Health Checker
+# Author: Faith Akinlade, Smit Desai, Pratham Waghela
+# Description: Loads the trained CNN model and class names, and provides a function to predict the health status of a
+# plant from a given image. Returns the predicted class and confidence score.
+
 import tensorflow as tf
 import numpy as np
 import json
