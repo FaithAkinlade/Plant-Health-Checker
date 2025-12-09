@@ -1,8 +1,4 @@
-# Project: Plant Health Checker
-# Students: Faith Akinlade, Smit Desai, Pratham Waghela
-# Description: Provides a graphical user interface (GUI) using Tkinter to allow users to upload plant images and check
-# their health. Integrates with the trained CNN model to make predictions.
-
+# gui_interface.py
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 from PIL import ImageTk, Image
@@ -12,32 +8,23 @@ import platform
 import subprocess
 from datetime import datetime
 
-# Try to import the prediction function.
+# Import both prediction functions
 try:
-    from model_predict import predict_image
+    from model_predict import predict_image, check_if_plant
 except ImportError:
     print("Warning: model_predict.py not found. Analysis will use dummy data.")
     predict_image = None
+    check_if_plant = None
 
 
 class PlantHealthApp:
-    """
-    The main application class for the Plant Health Checker.
-    It manages the GUI window, handles user input (buttons/files),
-    and coordinates the analysis and file saving processes.
-    """
     def __init__(self, root):
-       """
-        Initializes the main application window and sets up the layout.
-        :param root: The main window object from Tkinter.
-        :type root: tk.Tk
-        """
         self.root = root
         self.root.title("Group 7: Plant Health Checker")
         self.root.geometry("900x650")
         self.root.resizable(False, False)
 
-        # BACKGROUND CANVAS 
+        # BACKGROUND CANVAS
         self.canvas = tk.Canvas(root, width=900, height=650, highlightthickness=0)
         self.canvas.pack(fill="both", expand=True)
 
@@ -113,7 +100,7 @@ class PlantHealthApp:
         self.btn_exit = tk.Button(root, text="Exit", command=root.quit, width=button_width)
         self.canvas.create_window(center_x, 430, window=self.btn_exit)
 
-        #  RIGHT SIDE (Image Preview) 
+        # RIGHT SIDE (Image Preview) 
         self.right_frame = tk.Frame(root, bg="white", highlightthickness=2, bd=2, relief="groove")
         self.right_frame.place(x=450, y=50, width=400, height=400)
 
@@ -125,13 +112,8 @@ class PlantHealthApp:
         self.history_file = "history_log.txt"
         self.save_folder = "saved_images"
 
-        
 
     def select_image(self):
-        """
-        Opens a file dialog so the user can choose an image file.
-        :return: None
-        """
         file_path = filedialog.askopenfilename(
             title="Select a Plant Image",
             filetypes=[("Image Files", "*.jpg *.png *.jpeg")]
@@ -141,12 +123,6 @@ class PlantHealthApp:
             self.show_image_on_right(file_path)
 
     def show_image_on_right(self, file_path):
-        """
-        Resizes and displays the chosen image in the preview box.
-        :param file_path: The location of the image file.
-        :type file_path: str
-        :return: None
-        """
         try:
             img = Image.open(file_path)
             img = img.resize((380, 380))
@@ -155,12 +131,7 @@ class PlantHealthApp:
         except Exception as e:
             messagebox.showerror("Error", "Could not open image.")
 
-    # SAVE IMAGE FILE 
     def save_current_image(self):
-        """
-        Saves the currently selected image into the 'saved_images' folder.
-        :return: None
-        """
         if not self.selected_image_path:
             messagebox.showwarning("Warning", "No image selected to save.")
             return
@@ -179,22 +150,10 @@ class PlantHealthApp:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save image: {e}")
 
-    # SAVE TEXT LOG ENTRY 
     def save_to_history(self, plant_class, confidence):
-        """
-        Writes the result of an analysis to the history log file.
-        :param plant_class: The health status or disease name.
-        :type plant_class: str
-        :param confidence: The confidence percentage from the model.
-        :type confidence: float
-        :return: None
-        """
         try:
-            # FIXED: Added seconds back and corrected the order: File first, then Result
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             filename = os.path.basename(self.selected_image_path)
-
-            # This matches your first 3 lines format:
             log_entry = f"[{timestamp}] File: {filename} | Result: {plant_class} ({confidence:.2f}%)\n"
 
             with open(self.history_file, "a") as f:
@@ -202,32 +161,55 @@ class PlantHealthApp:
         except Exception as e:
             print(f"Error saving history: {e}")
 
-    def get_plant_message(self, plant_class):
-        """
-        Gets the advice message corresponding to the plant's health condition.
-        :param plant_class: The name of the condition (e.g. 'Healthy').
-        :type plant_class: str
-        :return: A string containing advice for the user.
-        """
-        messages = {
-            "Healthy": "Your plant looks healthy! Keep watering at recommended intervals and provide sunlight.",
-            "Rust": "Possible rust fungal infection detected. Consider removing infected leaves, and using antifungal spray.",
-            "Powdery": "Possible powdery mildew detected. Consider removing leaves, improving air flow and treating with a baking sode solution."
-        }
+    def get_plant_type(self, full_class_name):
+        if "___" in full_class_name:
+            return full_class_name.split("___")[0]
+        return full_class_name.split(" ")[0]
 
-        return messages.get(plant_class, "More analysis is required.")
+    def get_plant_condition(self, full_class_name):
+        if "___" in full_class_name:
+            condition_part = full_class_name.split("___")[1]
+            return condition_part.replace("_", " ")
+        return full_class_name
+
+    def get_plant_message(self, plant_class):
+        name = plant_class.lower()
+        if "healthy" in name:
+            return "Your plant looks healthy! Keep up the good work."
+        elif "rot" in name or "fung" in name or "blight" in name or "rust" in name or "mildew" in name:
+            return "Possible fungal or disease issue detected. Avoid overwatering and isolate the plant."
+        elif "bacteri" in name:
+            return "Bacterial symptoms detected. Remove infected leaves immediately."
+        elif "vir" in name:
+            return "Possible viral infection. Check for pests (like aphids) that spread viruses."
+        else:
+            return "Disease detected. Please consult a specialist for specific treatment."
 
     def open_results_window(self):
-        """
-        Runs the prediction and opens a new window to show the results.
-        :return: None
-        """
         if not self.selected_image_path:
             messagebox.showwarning("Warning", "Please select an image first.")
             return
 
+        # Plant Photo Checker
+        if check_if_plant:
+            # Note: Now expecting TWO return values (is_plant, label)
+            is_plant, detected_label = check_if_plant(self.selected_image_path)
+
+            if not is_plant:
+                # Ask the user if they want to proceed anyway
+                response = messagebox.askyesno(
+                    "Unusual Image Detected",
+                    f"The system thinks this looks like: '{detected_label}'\n"
+                    "It might not be a plant.\n\n"
+                    "Do you want to analyze it anyway?"
+                )
+                if not response:  # If user clicks 'No', stop.
+                    return
+                   
+
+        # PERFORM ANALYSIS 
         if predict_image is None:
-            plant_class = "Demo: Apple Rot"
+            plant_class = "Demo: Apple___Black_rot"
             confidence = 88.5
         else:
             try:
@@ -238,34 +220,41 @@ class PlantHealthApp:
 
         self.save_to_history(plant_class, confidence)
 
+        # 1. Get Clean Data
+        plant_name = self.get_plant_type(plant_class)
+        condition_name = self.get_plant_condition(plant_class)
+
         results_window = tk.Toplevel(self.root)
         results_window.title("Analysis Results")
-        results_window.geometry("400x350")
+        results_window.geometry("400x420")
 
         x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 200
         y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 175
         results_window.geometry(f"+{x}+{y}")
 
-        tk.Label(results_window, text="Analysis Complete", font=("Arial", 16, "bold")).pack(pady=20)
+        tk.Label(results_window, text="Analysis Complete", font=("Arial", 16, "bold")).pack(pady=15)
 
         details_frame = tk.Frame(results_window, relief="groove", borderwidth=2)
         details_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        color = "green" if "healthy" in plant_class.lower() else "red"
-        tk.Label(details_frame, text=f"Condition: {plant_class}", font=("Arial", 12, "bold"), fg=color).pack(pady=5)
-        tk.Label(details_frame, text=f"Confidence: {confidence:.2f}%", font=("Arial", 12)).pack(pady=5)
+        # Plant Name
+        tk.Label(details_frame, text="Plant Name:", font=("Arial", 10, "bold"), fg="gray").pack(pady=(10, 0))
+        tk.Label(details_frame, text=plant_name, font=("Arial", 14, "bold"), fg="#2c3e50").pack(pady=(0, 5))
 
+        # Condition
+        tk.Label(details_frame, text="Plant Condition:", font=("Arial", 10, "bold"), fg="gray").pack(pady=(5, 0))
+        cond_color = "green" if "healthy" in condition_name.lower() else "red"
+        tk.Label(details_frame, text=condition_name, font=("Arial", 12, "bold"), fg=cond_color).pack(pady=(0, 5))
+
+        # Confidence
+        tk.Label(details_frame, text=f"Confidence: {confidence:.2f}%", font=("Arial", 10)).pack(pady=5)
+
+        # Recommendation
         tk.Label(details_frame, text="Recommendation:", font=("Arial", 10, "bold")).pack(pady=(10, 0))
         tk.Label(details_frame, text=self.get_plant_message(plant_class), wraplength=300, justify="center").pack(pady=5)
 
         tk.Button(results_window, text="Close", command=results_window.destroy).pack(pady=10)
-
-    # VIEW HISTORY POPUP 
     def view_history_popup(self):
-        """
-        Opens a popup window that displays the contents of the history log.
-        :return: None
-        """
         history_win = tk.Toplevel(self.root)
         history_win.title("Analysis History")
         history_win.geometry("700x400")
@@ -285,26 +274,13 @@ class PlantHealthApp:
         text_area.config(state=tk.DISABLED)
         tk.Button(history_win, text="Close", command=history_win.destroy).pack(pady=5)
 
-    # OPEN SAVED FOLDER 
     def open_saved_images_folder(self):
-        """
-        Opens the folder containing saved images using the system file explorer.
-        :return: None
-        """
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)
-
         folder_path = os.path.abspath(self.save_folder)
         self.open_file_in_os(folder_path)
 
-    # Helper function to open files/folders 
     def open_file_in_os(self, path):
-        """
-        Helper to open a file or folder using the OS default command.
-        :param path: The file path to open.
-        :type path: str
-        :return: None
-        """
         try:
             if platform.system() == 'Darwin':  # macOS
                 subprocess.call(['open', path])
@@ -316,10 +292,6 @@ class PlantHealthApp:
             messagebox.showerror("Error", f"Could not open path: {e}")
 
     def reset_selection(self):
-        """
-        Clears the current image selection and resets the preview.
-        :return: None
-        """
         self.selected_image_path = None
         self.image_label.config(image="", text="Preview Area")
 
