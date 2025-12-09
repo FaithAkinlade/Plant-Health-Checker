@@ -174,16 +174,88 @@ class PlantHealthApp:
 
     def get_plant_message(self, plant_class):
         name = plant_class.lower()
+        def plant_recommendation(name):
+        # Universal healthy message
         if "healthy" in name:
-            return "Your plant looks healthy! Keep up the good work."
-        elif "rot" in name or "fung" in name or "blight" in name or "rust" in name or "mildew" in name:
-            return "Possible fungal or disease issue detected. Avoid overwatering and isolate the plant."
-        elif "bacteri" in name:
-            return "Bacterial symptoms detected. Remove infected leaves immediately."
-        elif "vir" in name:
-            return "Possible viral infection. Check for pests (like aphids) that spread viruses."
+            return "Your plant looks healthy! Keep up the great care—continue proper watering, sunlight, and avoid over-fertilization."
+        
+        # Apple Diseases
+        elif "Apple___Apple_scab" in name:
+            return "Apple Scab detected. Remove infected leaves and apply a fungicide containing captan or mancozeb. Improve air circulation by pruning."
+        elif "Apple___Black_rot" in name:
+            return "Black Rot found on Apple. Remove infected fruits and branches immediately, and apply a copper-based fungicide."
+        elif "Apple___Cedar_apple_rust" in name:
+            return "Cedar Apple Rust detected. Remove nearby cedar hosts if possible and apply sulfur or copper fungicide at bud break."
+        
+        # Blueberry
+        elif "Blueberry" in name:
+            return "Potential blueberry issue. Check for mildew or discoloration and prune crowded branches to improve airflow."
+        
+        # Cherry Diseases
+        elif "Cherry_(including_sour)___Powdery_mildew" in name:
+            return "Powdery Mildew found on Cherry. Increase air flow by pruning and use neem oil or potassium bicarbonate spray."
+        
+        # Corn (Maize) Diseases
+        elif "Cercospora_leaf_spot" in name:
+            return "Cercospora Leaf Spot detected on Corn. Use crop rotation, avoid overhead watering, and apply a strobilurin fungicide."
+        elif "Corn_(maize)___Common_rust_" in name:
+            return "Common Rust in Corn. Improve ventilation and consider rust-resistant varieties next season."
+        elif "Corn_(maize)___Northern_Leaf_Blight" in name:
+            return "Northern Leaf Blight detected. Remove infected debris and apply fungicide early in the season."
+        
+        # Grape Diseases
+        elif "Grape___Black_rot" in name:
+            return "Black Rot on Grapes. Remove all infected fruit immediately and spray a fungicide like myclobutanil."
+        elif "Grape___Esca_(Black_Measles)" in name:
+            return "Esca/Black Measles in Grapes. Remove infected wood and avoid drought stress. Fungicide options are limited."
+        elif "Grape___Leaf_blight" in name:
+            return "Leaf Blight detected in Grapes. Remove infected leaves and apply copper fungicide."
+        
+        # Citrus/Orange
+        elif "Orange___Haunglongbing_(Citrus_greening)" in name:
+            return "Citrus Greening detected. Unfortunately, there is no cure. Remove severely infected trees and control psyllid insects."
+        
+        # Peach & Pepper Bacterial Spot
+        elif "Bacterial_spot" in name:
+            return "Bacterial Spot detected. Use copper spray, avoid overhead watering, and remove infected leaves."
+        
+        # Potato Diseases
+        elif "Potato___Early_blight" in name:
+            return "Early Blight in Potatoes. Remove affected foliage and apply chlorothalonil or copper fungicide."
+        elif "Potato___Late_blight" in name:
+            return "Late Blight detected. Quickly remove infected plants and use a fungicide such as fluazinam."
+        
+        # Squash Powdery Mildew
+        elif "Squash___Powdery_mildew" in name:
+            return "Powdery Mildew on Squash. Increase airflow and apply sulfur or neem oil."
+        
+        # Strawberry Leaf Scorch
+        elif "Strawberry___Leaf_scorch" in name:
+            return "Leaf Scorch on Strawberry. Remove infected leaves, ensure good drainage, and avoid watering from above."
+        
+        # Tomato Diseases
+        elif "Tomato___Bacterial_spot" in name:
+            return "Bacterial Spot on Tomato. Apply copper sprays and avoid touching wet leaves."
+        elif "Tomato___Early_blight" in name:
+            return "Early Blight in Tomato. Remove infected leaves and use fungicides containing chlorothalonil."
+        elif "Tomato___Late_blight" in name:
+            return "Late Blight detected. Remove plants immediately to prevent spreading and use resistant varieties."
+        elif "Tomato___Leaf_Mold" in name:
+            return "Leaf Mold on Tomato. Reduce humidity and use copper fungicide."
+        elif "Tomato___Septoria_leaf_spot" in name:
+            return "Septoria Leaf Spot found. Remove lower leaves and apply fungicide."
+        elif "Tomato___Spider_mites" in name:
+            return "Spider Mites detected. Spray with water to knock them off and use neem oil or insecticidal soap."
+        elif "Tomato___Target_Spot" in name:
+            return "Target Spot detected. Remove infected leaves and apply a broad-spectrum fungicide."
+        elif "Tomato___Tomato_Yellow_Leaf_Curl_Virus" in name:
+            return "Yellow Leaf Curl Virus detected. Remove infected plants and control whiteflies."
+        elif "Tomato___Tomato_mosaic_virus" in name:
+            return "Tomato Mosaic Virus. Remove plant and sanitize tools thoroughly."
+        
+        # Generic feedback
         else:
-            return "Disease detected. Please consult a specialist for specific treatment."
+            return "We detected a potential plant issue. Monitor your plant closely and consider pruning affected leaves or using a fungicide."
 
     def open_results_window(self):
         if not self.selected_image_path:
