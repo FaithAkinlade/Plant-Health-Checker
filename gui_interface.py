@@ -174,7 +174,6 @@ class PlantHealthApp:
 
     def get_plant_message(self, plant_class):
         name = plant_class.lower()
-        def plant_recommendation(name):
         # Universal healthy message
         if "healthy" in name:
             return "Your plant looks healthy! Keep up the great care—continue proper watering, sunlight, and avoid over-fertilization."
