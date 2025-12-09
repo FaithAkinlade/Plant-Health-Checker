@@ -1,6 +1,6 @@
-# Author: Faith Akinlade (Group 7)
-# Date: 11/25/2025
-# Description: Testing file for various parts of the plant health Checker program.
+# Project: Plant Health Checker
+# Students: Faith Akinlade, Smit Desai, Pratham Waghela
+# Description: Testing file for various parts of plant health Checker program.
 
 import os
 import pytest
