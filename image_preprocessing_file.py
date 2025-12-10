@@ -7,6 +7,7 @@ import tensorflow as tf
 import os
 import zipfile
 
+%%writefile image_preprocessing_file.py
 
 # 1. AUTO-EXTRACTION 
 ZIP_FILENAME = "PlantVillage.zip"
