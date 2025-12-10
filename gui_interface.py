@@ -1,3 +1,8 @@
+# Plant Health Checker
+# Authors: Faith Akinlade, Smit Desai, Pratham Waghela (Group 7)
+# Description: Provides a graphical user interface (GUI) using Tkinter to allow users to upload plant images and check
+# their health. Integrates with the trained CNN model to make predictions.
+
 # gui_interface.py
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
@@ -112,7 +117,6 @@ class PlantHealthApp:
         self.history_file = "history_log.txt"
         self.save_folder = "saved_images"
 
-
     def select_image(self):
         file_path = filedialog.askopenfilename(
             title="Select a Plant Image",
@@ -173,11 +177,11 @@ class PlantHealthApp:
         return full_class_name
 
     def get_plant_message(self, plant_class):
-        name = plant_class.lower()
+        name = plant_class
         # Universal healthy message
         if "healthy" in name:
             return "Your plant looks healthy! Keep up the great care—continue proper watering, sunlight, and avoid over-fertilization."
-        
+
         # Apple Diseases
         elif "Apple___Apple_scab" in name:
             return "Apple Scab detected. Remove infected leaves and apply a fungicide containing captan or mancozeb. Improve air circulation by pruning."
@@ -185,15 +189,15 @@ class PlantHealthApp:
             return "Black Rot found on Apple. Remove infected fruits and branches immediately, and apply a copper-based fungicide."
         elif "Apple___Cedar_apple_rust" in name:
             return "Cedar Apple Rust detected. Remove nearby cedar hosts if possible and apply sulfur or copper fungicide at bud break."
-        
+
         # Blueberry
         elif "Blueberry" in name:
             return "Potential blueberry issue. Check for mildew or discoloration and prune crowded branches to improve airflow."
-        
+
         # Cherry Diseases
         elif "Cherry_(including_sour)___Powdery_mildew" in name:
             return "Powdery Mildew found on Cherry. Increase air flow by pruning and use neem oil or potassium bicarbonate spray."
-        
+
         # Corn (Maize) Diseases
         elif "Cercospora_leaf_spot" in name:
             return "Cercospora Leaf Spot detected on Corn. Use crop rotation, avoid overhead watering, and apply a strobilurin fungicide."
@@ -201,7 +205,7 @@ class PlantHealthApp:
             return "Common Rust in Corn. Improve ventilation and consider rust-resistant varieties next season."
         elif "Corn_(maize)___Northern_Leaf_Blight" in name:
             return "Northern Leaf Blight detected. Remove infected debris and apply fungicide early in the season."
-        
+
         # Grape Diseases
         elif "Grape___Black_rot" in name:
             return "Black Rot on Grapes. Remove all infected fruit immediately and spray a fungicide like myclobutanil."
@@ -209,29 +213,29 @@ class PlantHealthApp:
             return "Esca/Black Measles in Grapes. Remove infected wood and avoid drought stress. Fungicide options are limited."
         elif "Grape___Leaf_blight" in name:
             return "Leaf Blight detected in Grapes. Remove infected leaves and apply copper fungicide."
-        
+
         # Citrus/Orange
         elif "Orange___Haunglongbing_(Citrus_greening)" in name:
             return "Citrus Greening detected. Unfortunately, there is no cure. Remove severely infected trees and control psyllid insects."
-        
+
         # Peach & Pepper Bacterial Spot
         elif "Bacterial_spot" in name:
             return "Bacterial Spot detected. Use copper spray, avoid overhead watering, and remove infected leaves."
-        
+
         # Potato Diseases
         elif "Potato___Early_blight" in name:
             return "Early Blight in Potatoes. Remove affected foliage and apply chlorothalonil or copper fungicide."
         elif "Potato___Late_blight" in name:
             return "Late Blight detected. Quickly remove infected plants and use a fungicide such as fluazinam."
-        
+
         # Squash Powdery Mildew
         elif "Squash___Powdery_mildew" in name:
             return "Powdery Mildew on Squash. Increase airflow and apply sulfur or neem oil."
-        
+
         # Strawberry Leaf Scorch
         elif "Strawberry___Leaf_scorch" in name:
             return "Leaf Scorch on Strawberry. Remove infected leaves, ensure good drainage, and avoid watering from above."
-        
+
         # Tomato Diseases
         elif "Tomato___Bacterial_spot" in name:
             return "Bacterial Spot on Tomato. Apply copper sprays and avoid touching wet leaves."
@@ -251,7 +255,7 @@ class PlantHealthApp:
             return "Yellow Leaf Curl Virus detected. Remove infected plants and control whiteflies."
         elif "Tomato___Tomato_mosaic_virus" in name:
             return "Tomato Mosaic Virus. Remove plant and sanitize tools thoroughly."
-        
+
         # Generic feedback
         else:
             return "We detected a potential plant issue. Monitor your plant closely and consider pruning affected leaves or using a fungicide."
@@ -276,9 +280,8 @@ class PlantHealthApp:
                 )
                 if not response:  # If user clicks 'No', stop.
                     return
-                   
 
-        # PERFORM ANALYSIS 
+        # PERFORM ANALYSIS
         if predict_image is None:
             plant_class = "Demo: Apple___Black_rot"
             confidence = 88.5
@@ -325,6 +328,7 @@ class PlantHealthApp:
         tk.Label(details_frame, text=self.get_plant_message(plant_class), wraplength=300, justify="center").pack(pady=5)
 
         tk.Button(results_window, text="Close", command=results_window.destroy).pack(pady=10)
+
     def view_history_popup(self):
         history_win = tk.Toplevel(self.root)
         history_win.title("Analysis History")
